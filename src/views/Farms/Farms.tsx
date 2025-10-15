@@ -75,7 +75,7 @@ const enrichedFarms = farmsConfig.map((farm) => ({
           ))}
         </Route>
       </FlexLayout>
-      <Image src="/images/egg/8.png" alt="illustration" width={1352} height={587} responsive />
+      <Image src="/images/boo/8.png" alt="illustration" width={1352} height={587} responsive />
     </Page>
   );
 };

@@ -5,7 +5,7 @@ import { useWalletContext } from '../../../utils/walletContext';
 import { fetchTokenBalance, fetchSoulPrice } from '../../../utils/phantasmaApi';
 
 const StyledFarmStakingCard = styled(Card)`
-  background-image: url('/images/egg/2a.png');
+  background-image: url('/images/boo/2a.png');
   background-repeat: no-repeat;
   background-position: top right;
   min-height: 376px;
@@ -105,7 +105,7 @@ const FarmStakingCard = () => {
     <StyledFarmStakingCard>
       <CardBody>
         <Heading size="xl" mb="24px">Farms</Heading>
-        <CardImage src="/images/egg/boo.png" alt="BOO logo" width={64} height={64} />
+        <CardImage src="/images/boo/boo.png" alt="BOO logo" width={64} height={64} />
         <Block>
           <Label>BOO to Harvest</Label>
           <Text>{soulHarvest.toFixed(2)}</Text>
