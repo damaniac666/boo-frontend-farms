@@ -1,64 +1,37 @@
-import { useEffect, useState } from 'react'
-import BigNumber from 'bignumber.js'
-import { useWallet } from '@binance-chain/bsc-use-wallet'
-import { provider } from 'web3-core'
-import cakeABI from 'config/abi/cake.json'
-import { getContract } from 'utils/web3'
-import { getTokenBalance } from 'utils/erc20'
-import { getCakeAddress } from 'utils/addressHelpers'
-import useRefresh from './useRefresh'
+import { useEffect, useState } from 'react';
+import BigNumber from 'bignumber.js';
+import { fetchTokenBalance } from '../utils/phantasmaApi';
 
-const useTokenBalance = (tokenAddress: string) => {
-  const [balance, setBalance] = useState(new BigNumber(0))
-  const { account, ethereum }: { account: string; ethereum: provider } = useWallet()
-  const { fastRefresh } = useRefresh()
+const TOKEN_DECIMALS: Record<string, number> = {
+  KCAL: 10,
+  SOUL: 8,
+  BOO: 10,
+};
+
+const useTokenBalance = (symbol: string, account?: string | null) => {
+  const [balance, setBalance] = useState(new BigNumber(0));
 
   useEffect(() => {
     const fetchBalance = async () => {
-      const res = await getTokenBalance(ethereum, tokenAddress, account)
-      setBalance(new BigNumber(res))
-    }
+      if (!account || !symbol) return;
 
-    if (account && ethereum) {
-      fetchBalance()
-    }
-  }, [account, ethereum, tokenAddress, fastRefresh])
+      try {
+        const raw = await fetchTokenBalance(account, symbol);
+        
+const rawBN = new BigNumber(raw.toString().replace('.', '')); // ✅ remove decimal
+const decimals = TOKEN_DECIMALS[symbol.toUpperCase()] ?? 10;
+const normalized = rawBN.dividedBy(new BigNumber(10).pow(decimals));
+setBalance(normalized);
+      } catch (err) {
+        console.error(`[useTokenBalance] Failed to fetch ${symbol} balance:`, err);
+        setBalance(new BigNumber(0));
+      }
+    };
 
-  return balance
-}
+    fetchBalance();
+  }, [symbol, account]);
 
-export const useTotalSupply = () => {
-  const { slowRefresh } = useRefresh()
-  const [totalSupply, setTotalSupply] = useState<BigNumber>()
+  return balance;
+};
 
-  useEffect(() => {
-    async function fetchTotalSupply() {
-      const cakeContract = getContract(cakeABI, getCakeAddress())
-      const supply = await cakeContract.methods.totalSupply().call()
-      setTotalSupply(new BigNumber(supply))
-    }
-
-    fetchTotalSupply()
-  }, [slowRefresh])
-
-  return totalSupply
-}
-
-export const useBurnedBalance = (tokenAddress: string) => {
-  const [balance, setBalance] = useState(new BigNumber(0))
-  const { slowRefresh } = useRefresh()
-
-  useEffect(() => {
-    const fetchBalance = async () => {
-      const cakeContract = getContract(cakeABI, getCakeAddress())
-      const bal = await cakeContract.methods.balanceOf('0x000000000000000000000000000000000000dEaD').call()
-      setBalance(new BigNumber(bal))
-    }
-
-    fetchBalance()
-  }, [tokenAddress, slowRefresh])
-
-  return balance
-}
-
-export default useTokenBalance
+export default useTokenBalance;

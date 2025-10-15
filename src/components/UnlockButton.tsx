@@ -1,18 +1,18 @@
-import React from 'react'
-import { Button, useWalletModal } from '@pancakeswap-libs/uikit'
-import { useWallet } from '@binance-chain/bsc-use-wallet'
-import useI18n from 'hooks/useI18n'
+import React from 'react';
+import { connectWallet, getWalletAddress } from '../utils/easyConnect';
 
-const UnlockButton = (props) => {
-  const TranslateString = useI18n()
-  const { connect, reset } = useWallet()
-  const { onPresentConnectModal } = useWalletModal(connect, reset)
+const UnlockButton = () => {
+  const handleConnect = async () => {
+    const success = await connectWallet();
+    if (success) {
+      const address = await getWalletAddress();
+      console.log('Connected to wallet:', address);
+    } else {
+      alert('Connection failed. Make sure your wallet is installed and unlocked.');
+    }
+  };
 
-  return (
-    <Button onClick={onPresentConnectModal} {...props}>
-      {TranslateString(292, 'Unlock Wallet')}
-    </Button>
-  )
-}
+  return <button type="button" onClick={handleConnect}>Unlock Wallet</button>;
+};
 
-export default UnlockButton
+export default UnlockButton;

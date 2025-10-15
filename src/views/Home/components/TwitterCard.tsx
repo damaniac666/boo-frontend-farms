@@ -1,51 +1,37 @@
-import React from 'react'
-import { Card, CardBody, Heading, Text } from '@pancakeswap-libs/uikit'
-import BigNumber from 'bignumber.js/bignumber'
-import styled from 'styled-components'
-import { Timeline } from 'react-twitter-widgets'
-import { getBalanceNumber } from 'utils/formatBalance'
-import { useTotalSupply, useBurnedBalance } from 'hooks/useTokenBalance'
-import useI18n from 'hooks/useI18n'
-import { getCakeAddress } from 'utils/addressHelpers'
-import CardValue from './CardValue'
-import { useFarms } from '../../../state/hooks'
+import React from 'react';
+import { Card, CardBody, Heading } from '@pancakeswap-libs/uikit';
+import styled from 'styled-components';
 
 const StyledTwitterCard = styled(Card)`
   margin-left: auto;
   margin-right: auto;
 `
+const Block = styled.div`
+  margin-bottom: 16px;
+`;
 
-const Row = styled.div`
-  align-items: center;
-  display: flex;
+const Label = styled.div`
+  color: ${({ theme }) => theme.colors.textSubtle};
   font-size: 14px;
-  justify-content: space-between;
-  margin-bottom: 8px;
-`
+`;
+
 
 const TwitterCard = () => {
-  const TranslateString = useI18n()
-
   return (
     <StyledTwitterCard>
       <CardBody>
         <Heading size="xl" mb="24px">
-          {TranslateString(10003, 'Announcements')}
+          Notice
         </Heading>
-        <Timeline
-          dataSource={{
-            sourceType: 'profile',
-            screenName: 'GooseFinance'
-          }}
-          options={{
-            height: '300',
-            chrome: "noheader, nofooter",
-            width: "400"
-          }}
-        />
+        <Block>
+              <Label>IMPORTANT: This is a demonstration, test environment. Please assume it contains bugs/errors.</Label>
+              <br />
+              <Label>This farm is currently running on TestNet. The tokens have no value.</Label>
+            
+          </Block>
       </CardBody>
     </StyledTwitterCard>
-  )
-}
+  );
+};
 
-export default TwitterCard
+export default TwitterCard;

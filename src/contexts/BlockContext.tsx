@@ -1,26 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { getWeb3 } from 'utils/web3'
+import React, { createContext } from 'react';
 
-const BlockContext = React.createContext(0)
+export const BlockContext = createContext({ block: 0 });
 
-const BlockContextProvider = ({ children }) => {
-  const previousBlock = useRef(0)
-  const [block, setBlock] = useState(0)
+const BlockContextProvider: React.FC = ({ children }) => {
+  // Dummy block value (Phantasma doesn't use block numbers like EVM)
+  const block = 0;
 
+  // Future: Fetch Phantasma chain data if needed
+  /*
+  import { PhantasmaAPI } from 'phantasma-sdk-ts';
   useEffect(() => {
-    const web3 = getWeb3()
-    const interval = setInterval(async () => {
-      const blockNumber = await web3.eth.getBlockNumber()
-      if (blockNumber !== previousBlock.current) {
-        previousBlock.current = blockNumber
-        setBlock(blockNumber)
-      }
-    }, 6000)
+    const api = new PhantasmaAPI('https://mainnet.phantasma.io/rpc');
+    // Fetch chain height or equivalent
+  }, []);
+  */
 
-    return () => clearInterval(interval)
-  }, [])
+  return <BlockContext.Provider value={{ block }}>{children}</BlockContext.Provider>;
+};
 
-  return <BlockContext.Provider value={block}>{children}</BlockContext.Provider>
-}
-
-export { BlockContext, BlockContextProvider }
+export default BlockContextProvider;

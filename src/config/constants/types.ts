@@ -26,6 +26,9 @@ export enum QuoteToken {
   'BUSD' = 'BUSD',
   'TWT' = 'TWT',
   'UST' = 'UST',
+  'KCAL' = 'KCAL',
+  'BOO' = 'BOO',
+  'SOUL' = 'SOUL'
 }
 
 export enum PoolCategory {
@@ -40,22 +43,26 @@ export interface Address {
 }
 
 export interface FarmConfig {
-  pid: number
-  lpSymbol: string
-  lpAddresses: Address
-  tokenSymbol: string
-  tokenAddresses: Address
-  quoteTokenSymbol: QuoteToken
-  quoteTokenAdresses: Address
-  multiplier?: string
-  isTokenOnly?: boolean
-  isCommunity?: boolean
-  risk: number
+  pid: number;
+  lpSymbol: string;
+  lpAddresses: Address;
+  tokenSymbol: string;
+  tokenAddresses: Address;
+  quoteTokenSymbol: QuoteToken;
+  quoteTokenAdresses: Address;
+  multiplier?: string;
+  isTokenOnly: boolean;
+  depositFeeBP: number;
+  isCommunity?: boolean;
+  risk: number;
   dual?: {
-    rewardPerBlock: number
-    earnLabel: string
-    endBlock: number
-  }
+    rewardPerBlock: number;
+    earnLabel: string;
+    endBlock: number;
+  };
+  image: string; // ✅ required image name for UI
+  type: string;  // ✅ farm type (e.g. 'nft', 'standard', etc.)
+  allocPoints: number;
 }
 
 export interface PoolConfig {

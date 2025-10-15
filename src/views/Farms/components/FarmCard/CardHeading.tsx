@@ -1,15 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tag, Flex, Heading, Image } from '@pancakeswap-libs/uikit'
-import { CommunityTag, CoreTag, NoFeeTag, RiskTag } from 'components/Tags'
+import { NoFeeTag } from 'components/Tags'
 
-export interface ExpandableSectionProps {
-  lpLabel?: string
-  multiplier?: string
-  risk?: number
-  depositFee?: number
-  farmImage?: string
-  tokenSymbol?: string
+export interface CardHeadingProps {
+  lpLabel?: string;
+  multiplier?: string;
+  depositFee?: number;
+  farmImage?: string;
+  tokenSymbol?: string;
+  isTokenOnly?: boolean; // ✅ Add this
 }
 
 const Wrapper = styled(Flex)`
@@ -22,10 +22,9 @@ const MultiplierTag = styled(Tag)`
   margin-left: 4px;
 `
 
-const CardHeading: React.FC<ExpandableSectionProps> = ({
+const CardHeading: React.FC<CardHeadingProps> = ({
   lpLabel,
   multiplier,
-  risk,
   farmImage,
   tokenSymbol,
   depositFee,

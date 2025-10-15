@@ -1,42 +1,24 @@
-import { useEffect, useState } from 'react'
-import BigNumber from 'bignumber.js'
-import { useWallet } from '@binance-chain/bsc-use-wallet'
-import multicall from 'utils/multicall'
-import { getMasterChefAddress } from 'utils/addressHelpers'
-import masterChefABI from 'config/abi/masterchef.json'
-import { farmsConfig } from 'config/constants'
-import { FarmConfig } from 'config/constants/types'
-import useRefresh from './useRefresh'
+import { useEffect, useState } from 'react';
+import BigNumber from 'bignumber.js';
+import useRefresh from './useRefresh';
+import { FarmConfig } from 'config/constants/types';
+import { farmsConfig } from 'config/constants';
 
 export interface FarmWithBalance extends FarmConfig {
-  balance: BigNumber
+  balance: BigNumber;
 }
 
 const useFarmsWithBalance = () => {
-  const [farmsWithBalances, setFarmsWithBalances] = useState<FarmWithBalance[]>([])
-  const { account } = useWallet()
-  const { fastRefresh } = useRefresh()
+  const [farmsWithBalances, setFarmsWithBalances] = useState<FarmWithBalance[]>([]);
+  const { fastRefresh } = useRefresh();
 
   useEffect(() => {
-    const fetchBalances = async () => {
-      const calls = farmsConfig.map((farm) => ({
-        address: getMasterChefAddress(),
-        name: 'pendingEgg',
-        params: [farm.pid, account],
-      }))
+    // Dummy balances (0 for each farm)
+    const results = farmsConfig.map((farm) => ({ ...farm, balance: new BigNumber(0) }));
+    setFarmsWithBalances(results);
+  }, [fastRefresh]);
 
-      const rawResults = await multicall(masterChefABI, calls)
-      const results = farmsConfig.map((farm, index) => ({ ...farm, balance: new BigNumber(rawResults[index]) }))
+  return farmsWithBalances;
+};
 
-      setFarmsWithBalances(results)
-    }
-
-    if (account) {
-      fetchBalances()
-    }
-  }, [account, fastRefresh])
-
-  return farmsWithBalances
-}
-
-export default useFarmsWithBalance
+export default useFarmsWithBalance;

@@ -22,13 +22,20 @@ const StyledText = styled(Text)<TextProps>`
 const Balance: React.FC<BalanceProps> = ({ value, fontSize, color, decimals, isDisabled, unit }) => {
   const previousValue = useRef(0)
 
-  useEffect(() => {
-    previousValue.current = value
-  }, [value])
+ useEffect(() => {
+  previousValue.current = value ?? 0;
+}, [value]);
 
   return (
     <StyledText bold color={color} fontSize={fontSize} isDisabled={isDisabled}>
-      <CountUp start={previousValue.current} end={value} decimals={decimals} duration={1} separator="," />
+      <CountUp
+  start={previousValue.current ?? 0}
+  end={value ?? 0}
+  decimals={decimals}
+  duration={1}
+  separator=","
+/>
+
       {value && unit && <span>{unit}</span>}
     </StyledText>
   )

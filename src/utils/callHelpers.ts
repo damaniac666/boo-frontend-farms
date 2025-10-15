@@ -1,106 +1,61 @@
-import BigNumber from 'bignumber.js'
-import { ethers } from 'ethers'
+import BigNumber from 'bignumber.js';
 
 export const approve = async (lpContract, masterChefContract, account) => {
-  return lpContract.methods
-    .approve(masterChefContract.options.address, ethers.constants.MaxUint256)
-    .send({ from: account })
-}
+  console.log(`Stubbed approve for account: ${account}`);
+  // Future: Use phantasma-sdk-ts for approve
+  return 'dummy-tx-hash';
+};
 
 export const stake = async (masterChefContract, pid, amount, account) => {
-  return masterChefContract.methods
-    .deposit(pid, new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed stake for PID: ${pid}, amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for stake
+  return 'dummy-tx-hash';
+};
 
 export const sousStake = async (sousChefContract, amount, account) => {
-  return sousChefContract.methods
-    .deposit(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed sousStake for amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for sousStake
+  return 'dummy-tx-hash';
+};
 
 export const sousStakeBnb = async (sousChefContract, amount, account) => {
-  return sousChefContract.methods
-    .deposit()
-    .send({ from: account, value: new BigNumber(amount).times(new BigNumber(10).pow(18)).toString() })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed sousStakeBnb for amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for sousStakeBnb
+  return 'dummy-tx-hash';
+};
 
 export const unstake = async (masterChefContract, pid, amount, account) => {
-  return masterChefContract.methods
-    .withdraw(pid, new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed unstake for PID: ${pid}, amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for unstake
+  return 'dummy-tx-hash';
+};
 
 export const sousUnstake = async (sousChefContract, amount, account) => {
-  // shit code: hard fix for old CTK and BLK
-  if (sousChefContract.options.address === '0x3B9B74f48E89Ebd8b45a53444327013a2308A9BC') {
-    return sousChefContract.methods
-      .emergencyWithdraw()
-      .send({ from: account })
-      .on('transactionHash', (tx) => {
-        return tx.transactionHash
-      })
-  }
-  if (sousChefContract.options.address === '0xBb2B66a2c7C2fFFB06EA60BeaD69741b3f5BF831') {
-    return sousChefContract.methods
-      .emergencyWithdraw()
-      .send({ from: account })
-      .on('transactionHash', (tx) => {
-        return tx.transactionHash
-      })
-  }
-  return sousChefContract.methods
-    .withdraw(new BigNumber(amount).times(new BigNumber(10).pow(18)).toString())
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed sousUnstake for amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for sousUnstake
+  return 'dummy-tx-hash';
+};
 
 export const sousEmegencyUnstake = async (sousChefContract, amount, account) => {
-  return sousChefContract.methods
-    .emergencyWithdraw()
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed sousEmegencyUnstake for amount: ${amount}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for emergency unstake
+  return 'dummy-tx-hash';
+};
 
 export const harvest = async (masterChefContract, pid, account) => {
-  return masterChefContract.methods
-    .deposit(pid, '0')
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed harvest for PID: ${pid}, account: ${account}`);
+  // Future: Use phantasma-sdk-ts for harvest
+  return 'dummy-tx-hash';
+};
 
 export const soushHarvest = async (sousChefContract, account) => {
-  return sousChefContract.methods
-    .deposit('0')
-    .send({ from: account })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed soushHarvest for account: ${account}`);
+  // Future: Use phantasma-sdk-ts for harvest
+  return 'dummy-tx-hash';
+};
 
 export const soushHarvestBnb = async (sousChefContract, account) => {
-  return sousChefContract.methods
-    .deposit()
-    .send({ from: account, value: new BigNumber(0) })
-    .on('transactionHash', (tx) => {
-      return tx.transactionHash
-    })
-}
+  console.log(`Stubbed soushHarvestBnb for account: ${account}`);
+  // Future: Use phantasma-sdk-ts for harvest BNB
+  return 'dummy-tx-hash';
+};

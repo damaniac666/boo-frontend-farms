@@ -1,11 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit'
-import farmsReducer from './farms'
-import poolsReducer from './pools'
+import { configureStore } from '@reduxjs/toolkit';
+
+// Minimal store for Phantasma migration (no reducers needed for dummy data)
+const dummyReducer = (state = {}) => state;
 
 export default configureStore({
-  devTools: process.env.NODE_ENV !== 'production',
   reducer: {
-    farms: farmsReducer,
-    pools: poolsReducer,
+    dummy: dummyReducer,
   },
-})
+});

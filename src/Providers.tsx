@@ -1,39 +1,32 @@
-import React from 'react'
-import { ModalProvider } from '@pancakeswap-libs/uikit'
-// import bsc, { UseWalletProvider } from '@binance-chain/bsc-use-wallet'
-import * as bsc from '@binance-chain/bsc-use-wallet'
-import { Provider } from 'react-redux'
-import getRpcUrl from 'utils/getRpcUrl'
-import { LanguageContextProvider } from 'contexts/Localisation/languageContext'
+import React from 'react';
+import { Provider } from 'react-redux';
+import { ModalProvider, light, dark } from '@pancakeswap-libs/uikit';
+import { ThemeProvider } from 'styled-components';
+import LanguageContextProvider from 'contexts/Localisation/languageContext';
 import { ThemeContextProvider } from 'contexts/ThemeContext'
-import { BlockContextProvider } from 'contexts/BlockContext'
-import { RefreshContextProvider } from 'contexts/RefreshContext'
-import store from 'state'
+import BlockContextProvider from 'contexts/BlockContext';
+import RefreshContextProvider from 'contexts/RefreshContext';
+import store from 'state';
+import useTheme from 'hooks/useTheme'; // For global theme
 
 const Providers: React.FC = ({ children }) => {
-  const rpcUrl = getRpcUrl()
-  const chainId = parseInt(process.env.REACT_APP_CHAIN_ID);
+  const { isDark } = useTheme(); // Use the theme context for global theme
+
   return (
     <Provider store={store}>
-      <ThemeContextProvider>
-        <LanguageContextProvider>
-          <bsc.UseWalletProvider
-            chainId={chainId}
-            connectors={{
-              walletconnect: { rpcUrl },
-              bsc,
-            }}
-          >
+      <ThemeProvider theme={isDark ? dark : light}>
+        <ThemeContextProvider>
+          <LanguageContextProvider>
             <BlockContextProvider>
               <RefreshContextProvider>
                 <ModalProvider>{children}</ModalProvider>
               </RefreshContextProvider>
             </BlockContextProvider>
-          </bsc.UseWalletProvider>
-        </LanguageContextProvider>
-      </ThemeContextProvider>
+          </LanguageContextProvider>
+        </ThemeContextProvider>
+      </ThemeProvider>
     </Provider>
-  )
-}
+  );
+};
 
-export default Providers
+export default Providers;

@@ -1,106 +1,154 @@
-import React, { useState, useCallback } from 'react'
-import styled from 'styled-components'
-import { Heading, Card, CardBody, Button } from '@pancakeswap-libs/uikit'
-import { useWallet } from '@binance-chain/bsc-use-wallet'
-import BigNumber from 'bignumber.js'
-import useI18n from 'hooks/useI18n'
-import { useAllHarvest } from 'hooks/useHarvest'
-import useFarmsWithBalance from 'hooks/useFarmsWithBalance'
-import UnlockButton from 'components/UnlockButton'
-import CakeHarvestBalance from './CakeHarvestBalance'
-import CakeWalletBalance from './CakeWalletBalance'
-import { usePriceCakeBusd } from '../../../state/hooks'
-import useTokenBalance from '../../../hooks/useTokenBalance'
-import { getCakeAddress } from '../../../utils/addressHelpers'
-import useAllEarnings from '../../../hooks/useAllEarnings'
-import { getBalanceNumber } from '../../../utils/formatBalance'
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Heading, Card, CardBody, Button, Text } from '@pancakeswap-libs/uikit';
+import { useWalletContext } from '../../../utils/walletContext';
+import { fetchTokenBalance, fetchSoulPrice } from '../../../utils/phantasmaApi';
 
 const StyledFarmStakingCard = styled(Card)`
   background-image: url('/images/egg/2a.png');
   background-repeat: no-repeat;
   background-position: top right;
   min-height: 376px;
-`
+`;
 
 const Block = styled.div`
   margin-bottom: 16px;
-`
+`;
 
 const CardImage = styled.img`
   margin-bottom: 16px;
-`
+`;
 
 const Label = styled.div`
   color: ${({ theme }) => theme.colors.textSubtle};
   font-size: 14px;
-`
+`;
 
 const Actions = styled.div`
   margin-top: 24px;
-`
+`;
 
-const FarmedStakingCard = () => {
-  const [pendingTx, setPendingTx] = useState(false)
-  const { account } = useWallet()
-  const TranslateString = useI18n()
-  const farmsWithBalance = useFarmsWithBalance()
-  const cakeBalance = getBalanceNumber(useTokenBalance(getCakeAddress()))
-  const eggPrice = usePriceCakeBusd().toNumber()
-  const allEarnings = useAllEarnings()
-  const earningsSum = allEarnings.reduce((accum, earning) => {
-    return accum + new BigNumber(earning).div(new BigNumber(10).pow(18)).toNumber()
-  }, 0)
-  const balancesWithValue = farmsWithBalance.filter((balanceType) => balanceType.balance.toNumber() > 0)
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+`;
 
-  const { onReward } = useAllHarvest(balancesWithValue.map((farmWithBalance) => farmWithBalance.pid))
+const ModalContent = styled.div`
+  background: ${({ theme }) => theme.colors.background};
+  border-radius: 16px;
+  padding: 32px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(0,0,0,0.2);
+  color: ${({ theme }) => theme.colors.text};
+`;
 
-  const harvestAllFarms = useCallback(async () => {
-    setPendingTx(true)
-    try {
-      await onReward()
-    } catch (error) {
-      // TODO: find a way to handle when the user rejects transaction or it fails
-    } finally {
-      setPendingTx(false)
-    }
-  }, [onReward])
+const WalletButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+
+  img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    filter: ${({ theme }) => theme.isDark ? 'brightness(0.8)' : 'none'};
+  }
+`;
+
+const FarmStakingCard = () => {
+  const { account, connected, login } = useWalletContext();
+  const [soulBalance, setSoulBalance] = useState<number>(0);
+  const [soulPrice, setSoulPrice] = useState<number>(0);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const soulHarvest = 0; // Placeholder until staking logic is wired
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        if (account) {
+          const balance = await fetchTokenBalance(account, 'SOUL');
+          setSoulBalance(balance);
+        } else {
+          setSoulBalance(0);
+        }
+
+        const price = await fetchSoulPrice();
+        setSoulPrice(price);
+      } catch (error) {
+        console.error('[FarmStakingCard] Error fetching data:', error);
+        setSoulBalance(0);
+        setSoulPrice(0);
+      }
+    };
+
+    init();
+  }, [account, connected]);
+
+  const handleWalletConnect = async (provider: 'ecto' | 'poltergeist') => {
+    await login(provider);
+    setShowWalletModal(false);
+  };
 
   return (
     <StyledFarmStakingCard>
       <CardBody>
-        <Heading size="xl" mb="24px">
-          {TranslateString(542, 'Farms & Staking')}
-        </Heading>
-        <CardImage src="/images/egg/2.png" alt="cake logo" width={64} height={64} />
+        <Heading size="xl" mb="24px">Farms</Heading>
+        <CardImage src="/images/egg/boo.png" alt="BOO logo" width={64} height={64} />
         <Block>
-          <Label>{TranslateString(544, 'EGG to Harvest')}</Label>
-          <CakeHarvestBalance earningsSum={earningsSum}/>
-          <Label>~${(eggPrice * earningsSum).toFixed(2)}</Label>
+          <Label>BOO to Harvest</Label>
+          <Text>{soulHarvest.toFixed(2)}</Text>
+          <Label>~${(soulPrice * soulHarvest).toFixed(2)}</Label>
         </Block>
         <Block>
-          <Label>{TranslateString(546, 'EGG in Wallet')}</Label>
-          <CakeWalletBalance cakeBalance={cakeBalance} />
-          <Label>~${(eggPrice * cakeBalance).toFixed(2)}</Label>
+          <Label>BOO in Wallet</Label>
+          <Text>{soulBalance.toFixed(2)}</Text>
+          <Label>~${(soulPrice * soulBalance).toFixed(2)}</Label>
         </Block>
         <Actions>
-          {account ? (
-            <Button
-              id="harvest-all"
-              disabled={balancesWithValue.length <= 0 || pendingTx}
-              onClick={harvestAllFarms}
-              fullWidth
-            >
-              {pendingTx
-                ? TranslateString(548, 'Collecting EGG')
-                : TranslateString(999, `Harvest all (${balancesWithValue.length})`)}
+          {!connected ? (
+            <Button type="button" onClick={() => setShowWalletModal(true)}  style={{ width: '100%' }}>
+              Connect Phantasma Wallet
             </Button>
           ) : (
-            <UnlockButton fullWidth />
+            <Button disabled  style={{ width: '100%' }}>
+              Harvest all (0)
+            </Button>
           )}
         </Actions>
       </CardBody>
-    </StyledFarmStakingCard>
-  )
-}
 
-export default FarmedStakingCard
+      {showWalletModal && (
+        <ModalOverlay onClick={() => setShowWalletModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <Heading size="lg" mb="16px">Connect Wallet</Heading>
+            <Text mb="24px">Connect with one of our available wallet providers.</Text>
+
+            <WalletButton onClick={() => handleWalletConnect('poltergeist')} style={{ width: '100%' }}>
+              <img src="/images/wallets/poltergeistIcon.png" alt="Poltergeist Wallet" />
+              Poltergeist Wallet
+            </WalletButton>
+            <b />
+            <WalletButton onClick={() => handleWalletConnect('ecto')} style={{ width: '100%' }}>
+              <img src="/images/wallets/ectoIcon.png" alt="Ecto Wallet" />
+              Ecto Wallet
+            </WalletButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </StyledFarmStakingCard>
+  );
+};
+
+export default FarmStakingCard;
