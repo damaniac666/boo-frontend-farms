@@ -4,20 +4,20 @@ import { LanguageContext } from 'contexts/Localisation/languageContext';
 import { allLanguages } from 'config/localisation/languageCodes';
 import { Menu as UikitMenu, Button } from '@pancakeswap-libs/uikit';
 import { useWalletContext } from '../../utils/walletContext';
-import { fetchSoulPrice } from '../../utils/phantasmaApi';
+import { fetchBooPrice } from '../../utils/phantasmaApi';
 import config from './config';
 
 const Menu = (props) => {
   const { account, login, logout } = useWalletContext();
   const { isDark, toggleTheme } = useTheme();
   const { selectedLanguage, setSelectedLanguage } = useContext(LanguageContext);
-  const [soulPrice, setSoulPrice] = useState<number>(0);
+  const [booPrice, setBooPrice] = useState<number>(0);
 
   useEffect(() => {
-    fetchSoulPrice()
-      .then(setSoulPrice)
+    fetchBooPrice()
+      .then(setBooPrice)
       .catch((error) => {
-        console.error('[Menu] Error fetching SOUL price:', error);
+        console.error('[Menu] Error fetching BOO price:', error);
       });
   }, []);
 
@@ -33,7 +33,7 @@ const Menu = (props) => {
       langs={allLanguages}
       setLang={setSelectedLanguage}
       priceLink="https://www.coingecko.com/en/coins/phantasma"
-      cakePriceUsd={soulPrice}
+      cakePriceUsd={booPrice}
       links={config}
       profileLink={account ? `https://explorer.phantasma.info/en/address?id=${account}` : undefined}
       connectors={{}} // Disable EVM connectors

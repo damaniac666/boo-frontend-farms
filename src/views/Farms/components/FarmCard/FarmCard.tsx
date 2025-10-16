@@ -10,6 +10,7 @@ import {
   
 } from '@pancakeswap-libs/uikit';
 import ExpandableSectionButton from 'components/ExpandableSectionButton';
+import { calculateApyFromBooPerSecond } from 'utils/compoundApyHelpers'
 import DetailsSection from './DetailsSection';
 import CardHeading from './CardHeading';
 import ApyButton from './ApyButton';
@@ -19,6 +20,8 @@ import { useMasterChefV2 } from '../../../../hooks/masterchef/useMasterChefV2';
 import masterChefConfig from '../../../../config/masterchef';
 import useTokenBalance from '../../../../hooks/useTokenBalance';
 import { FarmWithStakedValue } from './types';
+
+
 
 const RainbowLight = keyframes`
   0% { background-position: 0% 50%; }
@@ -127,13 +130,13 @@ const Input = styled.input`
 interface FarmCardProps {
   farm: FarmWithStakedValue;
   removed: boolean;
-  cakePrice?: BigNumber;
+  booPrice?: BigNumber;
   soulPrice: number;     // ✅ required
   kcalPrice: number;     // ✅ required
   account?: string;
 }
 
-const FarmCard: React.FC<FarmCardProps> = ({ farm, removed, cakePrice, account: propAccount }) => {
+const FarmCard: React.FC<FarmCardProps> = ({ farm, removed, booPrice, account: propAccount }) => {
   const { account: contextAccount, login } = useWalletContext();
   const account = propAccount || contextAccount;
   const [showExpandableSection, setShowExpandableSection] = useState(false);
@@ -141,15 +144,20 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, removed, cakePrice, account: 
   const [amount, setAmount] = useState('');
   const masterChef = useMasterChefV2(masterChefConfig);
   const isEligible = useSATRNEligibility(account ?? '', farm.lpSymbol);
-  
+  const booPerSecond = new BigNumber('0.3472222222') // 10 decimals
+ const soulPrice = new BigNumber('0.02')            // $0.02 per BOO
+const poolValueUsd = new BigNumber(1000)           // assume full pool ownership
+
+const apy = farm.apy;
+
 
   const earnings = farm.userData?.pendingReward
     ? new BigNumber(farm.userData.pendingReward)
     : new BigNumber(0);
 
   const stakedBalance = farm.userData?.stakedBalance
-    ? new BigNumber(farm.userData.stakedBalance)
-    : new BigNumber(0);
+  ? new BigNumber(farm.userData.stakedBalance).div(1e10)
+  : new BigNumber(0)
 
   const walletBalance = useTokenBalance(farm.tokenSymbol, account);
   const hasCheckedIn = farm.userData?.checkedIn ?? false;
@@ -164,9 +172,9 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, removed, cakePrice, account: 
   }
 
   const totalValue = useMemo(() => {
-    if (!farm.lpTotalInQuoteToken || !cakePrice) return null;
-    return new BigNumber(farm.lpTotalInQuoteToken).times(cakePrice);
-  }, [farm.lpTotalInQuoteToken, cakePrice]);
+    if (!farm.lpTotalInQuoteToken || !booPrice) return null;
+    return new BigNumber(farm.lpTotalInQuoteToken).times(booPrice);
+  }, [farm.lpTotalInQuoteToken, booPrice]);
 
   const totalValueFormated = totalValue
     ? `$${Number(totalValue).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
@@ -242,31 +250,38 @@ const handleWalletConnect = (walletType: WalletProvider) => {
       />
 
       {!removed && (
-        <Flex justifyContent="space-between" alignItems="center">
-          <Text>APY</Text>
-          <Text bold style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
-                        {farm.apy ? (
-              <ApyButton
-  lpLabel={lpLabel}
-  apy={farm.apy}
-  tokenAddresses={farm.tokenAddresses}
-/>
-            ) : (
-              <Skeleton height={24} width={80} />
-            )}
-          </Text>
-        </Flex>
+  <Flex justifyContent="space-between" alignItems="center">
+    <Text>APR</Text>
+    <Text bold style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+      {farm.apy ? (
+        <ApyButton
+          lpLabel={lpLabel}
+          apy={farm.apy}
+          tokenAddresses={farm.tokenAddresses}
+          quoteTokenAdresses={farm.quoteTokenAdresses}
+          quoteTokenSymbol={farm.quoteTokenSymbol}
+          booPrice={new BigNumber(booPrice)} // ✅ use soulPrice here
+
+        />
+      ) : (
+        <Skeleton height={24} width={80} />
       )}
+    </Text>
+  </Flex>
+)}
+
 
       <Flex justifyContent="space-between">
         <Text>Stake</Text>
         <Text bold>{lpLabel}</Text>
       </Flex>
 
-      <Flex justifyContent="space-between">
-        <Text>Staked</Text>
-        <Text bold>{stakedBalance.toFixed(2)}</Text>
-      </Flex>
+     <Flex justifyContent="space-between">
+  <Text>Staked</Text>
+  <Text bold>
+    {new BigNumber(farm.userData?.stakedBalance || 0).div(1e10).toFixed(2)} 
+  </Text>
+</Flex>
 
       <Flex justifyContent="space-between">
         <Text>Deposit Fee</Text>

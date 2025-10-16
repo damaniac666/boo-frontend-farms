@@ -1,4 +1,20 @@
 import { calculateCakeEarnedPerThousandDollars, apyModalRoi } from '../utils/compoundApyHelpers'
+import BigNumber from 'bignumber.js'
+
+export function calculateApyFromBooPerSecond({
+  booPerSecond,
+  booPriceUsd,
+  poolValueUsd,
+}: {
+  booPerSecond: BigNumber
+  booPriceUsd: BigNumber
+  poolValueUsd: BigNumber
+}): BigNumber {
+  const secondsPerYear = new BigNumber(365 * 24 * 60 * 60)
+  const yearlyBoo = booPerSecond.times(secondsPerYear)
+  const yearlyRewardUsd = yearlyBoo.times(booPriceUsd)
+  return yearlyRewardUsd.div(poolValueUsd).times(100)
+}
 
 it.each([
   [{ numberOfDays: 1, farmApy: 365, cakePrice: 1 }, 10],

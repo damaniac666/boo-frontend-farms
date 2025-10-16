@@ -1,7 +1,14 @@
+import BigNumber from 'bignumber.js'
+import { fetchBooPrice } from 'utils/phantasmaApi'
+import { calculateApyFromBooPerSecond } from 'utils/compoundApyHelpers'
+
 import contracts from './contracts'
 import { FarmConfig, QuoteToken } from './types'
 
+const TOTAL_BOO_PER_SECOND = new BigNumber('0.3472222222') // 10 decimals
+
 const farms: FarmConfig[] = [
+   
   {
     pid: 0,
     risk: 5,
@@ -110,11 +117,32 @@ const farms: FarmConfig[] = [
   },
 ]
 
-const BASE_ALLOC = 100;
+const BASE_ALLOC = 100
+const TOTAL_ALLOC_POINTS = farms.reduce((sum, farm) => sum + farm.allocPoints, 0)
 
-const farmsWithMultiplier = farms.map((farm) => ({
-  ...farm,
-  multiplier: `${farm.allocPoints / BASE_ALLOC}X`,
-}));
+const getFarmsWithApy = async (): Promise<FarmConfig[]> => {
+  const booPriceUsdRaw = await fetchBooPrice()
+  const BOO_PRICE_USD = new BigNumber(booPriceUsdRaw)
 
-export default farmsWithMultiplier;
+  const farmsWithApy = farms.map((farm) => {
+    const poolShare = new BigNumber(farm.allocPoints).div(TOTAL_ALLOC_POINTS)
+    const farmBooPerSecond = TOTAL_BOO_PER_SECOND.times(poolShare)
+    const poolValueUsd = new BigNumber(20000)
+
+    const simulatedApy = calculateApyFromBooPerSecond({
+      booPerSecond: farmBooPerSecond,
+      booPriceUsd: BOO_PRICE_USD,
+      poolValueUsd,
+    })
+
+    return {
+      ...farm,
+      multiplier: `${farm.allocPoints / BASE_ALLOC}X`,
+      apy: simulatedApy,
+    }
+  })
+
+  return farmsWithApy
+}
+
+export default getFarmsWithApy

@@ -76,6 +76,13 @@ export const fetchSoulPrice = async (): Promise<number> => {
        }
      };
 
+     export const fetchBooPrice = async (): Promise<number> => {
+  // For now, reuse soul price until BOO price source is wired
+  // const booPrice = await fetchSoulPrice()
+   const booPrice = 0.55;
+  return booPrice
+}
+
      export const fetchContractBalance = async (address: string, symbol: string): Promise<number> => {
   const url = `https://api-explorer.phantasma.info/api/v1/addresses?address=${address}&with_balance=1`;
 

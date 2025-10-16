@@ -1,54 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { Route, useRouteMatch } from 'react-router-dom';
-import { Heading, Image } from '@pancakeswap-libs/uikit';
-import Page from 'components/layout/Page';
-import FlexLayout from 'components/layout/Flex';
-import farmsConfig from 'config/constants/farms';
-import BigNumber from 'bignumber.js';
-import Divider from './components/Divider';
-import FarmCard from './components/FarmCard/FarmCard';
-import { useWalletContext } from '../../utils/walletContext';
-import { fetchSoulPrice, fetchKCALPrice } from '../../utils/phantasmaApi';
+import React, { useEffect, useState } from 'react'
+import BigNumber from 'bignumber.js'
+import { Route, useRouteMatch } from 'react-router-dom'
+import { Heading, Image, Text } from '@pancakeswap-libs/uikit'
+import Page from 'components/layout/Page'
+import FlexLayout from 'components/layout/Flex'
+import getFarmsWithApy from 'config/constants/farms'
+import FarmCard from './components/FarmCard/FarmCard'
+import Divider from './components/Divider'
+import { useWalletContext } from '../../utils/walletContext'
+import { fetchSoulPrice, fetchKCALPrice, fetchBooPrice } from '../../utils/phantasmaApi'
+
 
 export interface FarmsProps {
-  tokenMode?: boolean;
+  tokenMode?: boolean
 }
 
 const Farms: React.FC<FarmsProps> = ({ tokenMode }) => {
-  const { path } = useRouteMatch();
-  const { account, connected } = useWalletContext();
-  const [soulPrice, setSoulPrice] = useState(0);
-  const [kcalPrice, setKcalPrice] = useState(0);
+  const { path } = useRouteMatch()
+  const { account, connected } = useWalletContext()
+
+  const [soulPrice, setSoulPrice] = useState(0)
+  const [kcalPrice, setKcalPrice] = useState(0)
+  const [booPrice, setBooPrice] = useState<BigNumber>()
+  const [farms, setFarms] = useState([])
 
   useEffect(() => {
     const init = async () => {
-      const soul = await fetchSoulPrice();
-      const kcal = await fetchKCALPrice();
-      setSoulPrice(soul);
-      setKcalPrice(kcal);
-    };
-    init();
-  }, []);
+      const soul = await fetchSoulPrice()
+      const kcal = await fetchKCALPrice()
+      const boo = await fetchBooPrice()
+      const farmsWithApy = await getFarmsWithApy()
 
-  // Enrich farm config with placeholder APY and userData
-const enrichedFarms = farmsConfig.map((farm) => ({
-  ...farm,
-  apy: new BigNumber(soulPrice).div(1000), // Placeholder APY
-  lpTotalInQuoteToken: 1000, // Placeholder TVL
-  multiplier: `${farm.allocPoints / 100}X`, // ✅ derived from allocPoints
-  isTokenOnly: farm.isTokenOnly, // ✅ preserved from config
-  userData: connected
-    ? {
-        stakedBalance: '100000000', // 1 token in 8 decimals
-        pendingReward: '0',         // ✅ stubbed
-        checkedIn: false,           // ✅ stubbed (can wire in useSATRNEligibility later)
-      }
-    : {
-        stakedBalance: '0',
-        pendingReward: '0',
-        checkedIn: false,
-      },
-}));
+      const farmsWithUserData = farmsWithApy.map((farm) => {
+        const simulatedStake = new BigNumber(farm.allocPoints).div(100).times(1e10).toFixed(0) // scale by allocPoints
+        return {
+          ...farm,
+          userData: {
+            stakedBalance: simulatedStake,
+            pendingReward: '0',
+            checkedIn: true,
+          },
+        }
+      })
+
+      setSoulPrice(soul)
+      setKcalPrice(kcal)
+      setBooPrice(new BigNumber(boo))
+      setFarms(farmsWithUserData)
+    }
+
+    init()
+  }, [])
 
   return (
     <Page>
@@ -63,21 +65,26 @@ const enrichedFarms = farmsConfig.map((farm) => ({
       <Divider />
       <FlexLayout>
         <Route exact path={`${path}`}>
-          {enrichedFarms.map((farm) => (
-            <FarmCard
-              key={farm.pid}
-              farm={farm}
-              removed={false}
-              soulPrice={soulPrice}
-              kcalPrice={kcalPrice}
-              account={account}
-            />
-          ))}
+          {farms.length === 0 ? (
+            <Text>Loading farms...</Text>
+          ) : (
+            farms.map((farm) => (
+              <FarmCard
+                key={farm.pid}
+                farm={farm}
+                removed={false}
+                soulPrice={soulPrice}
+                kcalPrice={kcalPrice}
+                booPrice={booPrice}
+                account={account}
+              />
+            ))
+          )}
         </Route>
       </FlexLayout>
       <Image src="/images/boo/8.png" alt="illustration" width={1352} height={587} responsive />
     </Page>
-  );
-};
+  )
+}
 
-export default Farms;
+export default Farms
