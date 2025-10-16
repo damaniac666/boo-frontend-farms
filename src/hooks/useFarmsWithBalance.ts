@@ -13,9 +13,16 @@ const useFarmsWithBalance = () => {
   const { fastRefresh } = useRefresh();
 
   useEffect(() => {
-    // Dummy balances (0 for each farm)
-    const results = farmsConfig.map((farm) => ({ ...farm, balance: new BigNumber(0) }));
-    setFarmsWithBalances(results);
+    const fetchFarms = async () => {
+      const farms = await farmsConfig(); // ✅ resolve the promise
+      const results = farms.map((farm) => ({
+        ...farm,
+        balance: new BigNumber(0),
+      }));
+      setFarmsWithBalances(results);
+    };
+
+    fetchFarms();
   }, [fastRefresh]);
 
   return farmsWithBalances;

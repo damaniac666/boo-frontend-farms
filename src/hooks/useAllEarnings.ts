@@ -7,11 +7,15 @@ const useAllEarnings = () => {
   const [balances, setBalance] = useState<BigNumber[]>([]);
   const { fastRefresh } = useRefresh();
 
-  useEffect(() => {
-    // Dummy balances (0 for each farm)
-    const res = farmsConfig.map(() => new BigNumber(0));
-    setBalance(res);
-  }, [fastRefresh]);
+useEffect(() => {
+  const fetchDummyBalances = async () => {
+    const farms = await farmsConfig()
+    const res = farms.map(() => new BigNumber(0))
+    setBalance(res)
+  }
+
+  fetchDummyBalances()
+}, [fastRefresh])
 
   return balances;
 };
