@@ -144,9 +144,6 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, removed, booPrice, account: p
   const [amount, setAmount] = useState('');
   const masterChef = useMasterChefV2(masterChefConfig);
   const isEligible = useSATRNEligibility(account ?? '', farm.lpSymbol);
-  const booPerSecond = new BigNumber('0.3472222222') // 10 decimals
- const soulPrice = new BigNumber('0.02')            // $0.02 per BOO
-const poolValueUsd = new BigNumber(1000)           // assume full pool ownership
 
 const apy = farm.apy;
 
@@ -161,6 +158,8 @@ const apy = farm.apy;
 
   const walletBalance = useTokenBalance(farm.tokenSymbol, account);
   const hasCheckedIn = farm.userData?.checkedIn ?? false;
+  const stakedValueUsd = stakedBalance.times(booPrice ?? 0)
+  const myStakedValueFormatted = `$${stakedValueUsd.toFormat(2)}`
 
   let farmImage: string;
   if (farm.image) {
@@ -172,9 +171,8 @@ const apy = farm.apy;
   }
 
   const totalValue = useMemo(() => {
-    if (!farm.lpTotalInQuoteToken || !booPrice) return null;
-    return new BigNumber(farm.lpTotalInQuoteToken).times(booPrice);
-  }, [farm.lpTotalInQuoteToken, booPrice]);
+  return farm.lpTotalInQuoteToken ?? null;
+}, [farm.lpTotalInQuoteToken]);
 
   const totalValueFormated = totalValue
     ? `$${Number(totalValue).toLocaleString(undefined, { maximumFractionDigits: 0 })}`
@@ -361,14 +359,16 @@ const handleWalletConnect = (walletType: WalletProvider) => {
       />
 
       <ExpandingWrapper expanded={showExpandableSection}>
-        <DetailsSection
+       <DetailsSection
   removed={removed}
-  isTokenOnly={farm.type === 'stake'} // ✅ correct logic
+  isTokenOnly={farm.type === 'stake'}
   totalValueFormated={totalValueFormated}
-  lpLabel={lpLabel}
+  myStakedValueFormatted={myStakedValueFormatted} // ✅ this line is key
+  lpLabel={farm.lpSymbol}
   quoteTokenSymbol={farm.quoteTokenSymbol}
   tokenSymbol={farm.tokenSymbol}
 />
+
 
       </ExpandingWrapper>
 

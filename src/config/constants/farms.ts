@@ -137,6 +137,7 @@ const getFarmsWithApy = async (): Promise<FarmConfig[]> => {
 
     return {
       ...farm,
+      lpTotalInQuoteToken: poolValueUsd, // ✅ this line wires it up
       multiplier: `${farm.allocPoints / BASE_ALLOC}X`,
       apy: simulatedApy,
     }

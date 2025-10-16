@@ -6,6 +6,7 @@ export interface ExpandableSectionProps {
   isTokenOnly?: boolean;
   removed?: boolean;
   totalValueFormated?: string;
+  myStakedValueFormatted?: string; // ✅ new
   lpLabel?: string;
   tokenSymbol?: string;
    quoteTokenSymbol?: string;
@@ -19,6 +20,7 @@ const DetailsSection: React.FC<ExpandableSectionProps> = ({
   isTokenOnly,
   removed,
   totalValueFormated,
+  myStakedValueFormatted, // ✅ new
   lpLabel,
   tokenSymbol,
 }) => {
@@ -38,11 +40,17 @@ const stakeUrl = `https://explorer.phantasma.info/en/token?id=${tokenId}`;
         </Link>
       </Flex>
       {!removed && (
-        <Flex justifyContent="space-between">
-          <Text>Total Liquidity:</Text>
-          <Text>{totalValueFormated}</Text>
-        </Flex>
-      )}
+  <>
+    <Flex justifyContent="space-between">
+      <Text>Total Value:</Text>
+      <Text>{totalValueFormated}</Text>
+    </Flex>
+    <Flex justifyContent="space-between">
+      <Text>My Staked Value:</Text>
+      <Text>{myStakedValueFormatted}</Text>
+    </Flex>
+  </>
+)}
       
     </Wrapper>
   );
