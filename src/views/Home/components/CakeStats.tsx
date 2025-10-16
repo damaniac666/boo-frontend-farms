@@ -29,6 +29,7 @@ const CakeStats = () => {
   const [soulPrice, setSoulPrice] = useState<number>(0);
   const [totalSupply, setTotalSupply] = useState<number>(0);
   const [burnedSupply, setBurnedSupply] = useState<number>(0);
+  const TOTAL_BOO_PER_SECOND = 0.3472222222
 
 useEffect(() => {
   const loadStats = async () => {
@@ -64,6 +65,10 @@ useEffect(() => {
             <Row>
               <Text fontSize="14px">Burned</Text>
               <CardValue fontSize="14px" value={burnedSupply} decimals={0} />
+            </Row>
+            <Row>
+              <Text fontSize="14px">New BOO/Second</Text>
+              <CardValue fontSize="14px" value={TOTAL_BOO_PER_SECOND} decimals={10} />
             </Row>
       </CardBody>
     </StyledCakeStats>

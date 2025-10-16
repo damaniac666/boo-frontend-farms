@@ -27,7 +27,12 @@ const TwitterCard = () => {
               <Label>IMPORTANT: This is a demonstration, test environment. Please assume it contains bugs/errors.</Label>
               <br />
               <Label>This farm is currently running on TestNet. The tokens have no value.</Label>
-            
+              <br />
+              <Label>BOO is a MEME coin distributed over a period of 700 days. The emission rate will halve twice during the 700 days resulting in a max supply of 10 million BOO.</Label>
+              <br />
+              <Label>Overall supply will likely be lower as a result of periodic burning.</Label>
+              <br />
+              <Label>There is a gameified "BURN" function within the contract that receives the deposit fees. This can be called by anyone to burn KCAL, buy back and burn BOO and receive a SOUL reward.</Label>
           </Block>
       </CardBody>
     </StyledTwitterCard>
