@@ -32,7 +32,7 @@ const TwitterCard = () => {
               <br />
               <Label>Overall supply will likely be lower as a result of periodic burning.</Label>
               <br />
-              <Label>There is a gameified "BURN" function within the contract that receives the deposit fees. This can be called by anyone to burn KCAL, buy back and burn BOO and receive a SOUL reward.</Label>
+              <Label>There is a gameified BURN function within the contract that receives the deposit fees. This can be called by anyone to burn KCAL, buy back and burn BOO and receive a SOUL reward.</Label>
           </Block>
       </CardBody>
     </StyledTwitterCard>
