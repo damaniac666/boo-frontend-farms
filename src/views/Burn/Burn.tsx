@@ -164,7 +164,7 @@ const BurnPage: React.FC = () => {
           <Text bold fontSize="20px" mb="16px">KCAL Burned: {stats.kcalBurned}</Text>
         </CounterBox>
         <CounterBox>
-          <CenteredImage src="/images/farms/SOUL.png" width={40} height={40} alt="SOUL" />
+          <CenteredImage src="/images/farms/soul.png" width={40} height={40} alt="SOUL" />
           <Text bold fontSize="20px" mb="16px">SOUL Rewarded: {stats.soulRewarded}</Text>
         </CounterBox>
       </CounterSection>

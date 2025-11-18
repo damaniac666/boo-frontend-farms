@@ -16,14 +16,39 @@ import { PhantasmaTS, Account } from 'phantasma-sdk-ts';
        }
      };
 
-     export const fetchTokenBalance = async (address: string, symbol: string): Promise<number> => {
-       const account = await fetchAccount(address);
-       if (!account) return 0;
+export interface TokenBalanceInfo {
+  chain: string;
+  amount: string;      // raw integer string (e.g. "399923800000")
+  symbol: string;
+  decimals: number;
+}
 
-       const token = account.balances.find((b) => b.symbol === symbol);
-       const raw = token?.amount || '0';
-       return parseFloat(raw) / 1e8;
-     };
+export const fetchTokenBalance = async (
+  address: string,
+  symbol: string
+): Promise<TokenBalanceInfo | null> => {
+  try {
+    const account = await api.getAccount(address);
+    if (!account || !account.balances) {
+      return null;
+    }
+
+    const token = account.balances.find((b: any) => b.symbol === symbol);
+    if (!token) {
+      return null;
+    }
+
+    return {
+      chain: account.address, // or use the actual chain input if needed
+      amount: token.amount,   // this is the raw integer string (no decimal point)
+      symbol: token.symbol,
+      decimals: token.decimals ?? 10,
+    };
+  } catch (err) {
+    console.error('Failed to fetch token balance:', err);
+    return null;
+  }
+};
 
 let lastFetchTime = 0;
 let cachedSoulPrice = 0;
