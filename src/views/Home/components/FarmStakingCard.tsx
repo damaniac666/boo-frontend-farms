@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Heading, Card, CardBody, Button, Text } from '@pancakeswap-libs/uikit';
 import { useWalletContext } from '../../../utils/walletContext';
 import { fetchTokenBalance, fetchSoulPrice } from '../../../utils/phantasmaApi';
+import BigNumber from 'bignumber.js';
 
 const StyledFarmStakingCard = styled(Card)`
   background-image: url('/images/boo/2a.png');
@@ -58,6 +59,7 @@ const WalletButton = styled(Button)`
   width: 100%;
   padding: 12px;
   font-size: 16px;
+  margin-bottom: 12px;
 
   img {
     width: 24px;
@@ -69,26 +71,31 @@ const WalletButton = styled(Button)`
 
 const FarmStakingCard = () => {
   const { account, connected, login } = useWalletContext();
-  const [soulBalance, setSoulBalance] = useState<number>(0);
+  const [soulBalance, setSoulBalance] = useState<BigNumber>(new BigNumber(0));
   const [soulPrice, setSoulPrice] = useState<number>(0);
   const [showWalletModal, setShowWalletModal] = useState(false);
-  const soulHarvest = 0; // Placeholder until staking logic is wired
+
+  const soulHarvest = new BigNumber(0); // Placeholder until staking logic is wired
 
   useEffect(() => {
     const init = async () => {
       try {
+        let balanceBN = new BigNumber(0);
+
         if (account) {
-          const balance = await fetchTokenBalance(account, 'SOUL');
-          setSoulBalance(balance);
-        } else {
-          setSoulBalance(0);
+          const result = await fetchTokenBalance(account, 'SOUL');
+          if (result && result.amount) {
+            balanceBN = new BigNumber(result.amount).dividedBy(new BigNumber(10).pow(result.decimals));
+          }
         }
+
+        setSoulBalance(balanceBN);
 
         const price = await fetchSoulPrice();
         setSoulPrice(price);
       } catch (error) {
         console.error('[FarmStakingCard] Error fetching data:', error);
-        setSoulBalance(0);
+        setSoulBalance(new BigNumber(0));
         setSoulPrice(0);
       }
     };
@@ -101,29 +108,36 @@ const FarmStakingCard = () => {
     setShowWalletModal(false);
   };
 
+  const balanceDisplay = soulBalance.isZero() ? '0.00' : soulBalance.toFixed(2);
+  const balanceValue = soulBalance.times(soulPrice);
+  const harvestValue = soulHarvest.times(soulPrice);
+
   return (
     <StyledFarmStakingCard>
       <CardBody>
         <Heading size="xl" mb="24px">Farms</Heading>
         <CardImage src="/images/boo/boo.png" alt="BOO logo" width={64} height={64} />
+        
         <Block>
           <Label>BOO to Harvest</Label>
-          <Text>{soulHarvest.toFixed(2)}</Text>
-          <Label>~${(soulPrice * soulHarvest).toFixed(2)}</Label>
+          <Text fontSize="24px" bold>{soulHarvest.toFixed(2)}</Text>
+          <Label>~${harvestValue.toFixed(2)}</Label>
         </Block>
+
         <Block>
           <Label>BOO in Wallet</Label>
-          <Text>{soulBalance.toFixed(2)}</Text>
-          <Label>~${(soulPrice * soulBalance).toFixed(2)}</Label>
+          <Text fontSize="24px" bold>{balanceDisplay}</Text>
+          <Label>~${balanceValue.toFixed(2)}</Label>
         </Block>
+
         <Actions>
           {!connected ? (
-            <Button type="button" onClick={() => setShowWalletModal(true)}  style={{ width: '100%' }}>
+            <Button onClick={() => setShowWalletModal(true)} style={{ width: '100%' }}>
               Connect Phantasma Wallet
             </Button>
           ) : (
-            <Button disabled  style={{ width: '100%' }}>
-              Harvest all (0)
+            <Button disabled style={{ width: '100%' }}>
+              Harvest all (coming soon)
             </Button>
           )}
         </Actions>
@@ -135,12 +149,12 @@ const FarmStakingCard = () => {
             <Heading size="lg" mb="16px">Connect Wallet</Heading>
             <Text mb="24px">Connect with one of our available wallet providers.</Text>
 
-            <WalletButton onClick={() => handleWalletConnect('poltergeist')} style={{ width: '100%' }}>
+            <WalletButton onClick={() => handleWalletConnect('poltergeist')}>
               <img src="/images/wallets/poltergeistIcon.png" alt="Poltergeist Wallet" />
               Poltergeist Wallet
             </WalletButton>
-            <b />
-            <WalletButton onClick={() => handleWalletConnect('ecto')} style={{ width: '100%' }}>
+
+            <WalletButton onClick={() => handleWalletConnect('ecto')}>
               <img src="/images/wallets/ectoIcon.png" alt="Ecto Wallet" />
               Ecto Wallet
             </WalletButton>
