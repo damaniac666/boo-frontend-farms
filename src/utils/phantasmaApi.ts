@@ -1,7 +1,7 @@
 import { PhantasmaTS, Account } from 'phantasma-sdk-ts';
 
      export const api = new PhantasmaTS.PhantasmaAPI(
-       "https://pharpc1.phantasma.info/rpc",
+       "https://devnet.phantasma.info/rpc",
        null,
        "mainnet"
      );

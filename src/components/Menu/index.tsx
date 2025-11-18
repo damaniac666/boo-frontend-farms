@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
-import useTheme from 'hooks/useTheme';
-import { LanguageContext } from 'contexts/Localisation/languageContext';
-import { allLanguages } from 'config/localisation/languageCodes';
+import useTheme from '../../hooks/useTheme';
+import { LanguageContext } from '../../contexts/Localization/languageContext';
+import { allLanguages } from '../../config/Localization/languageCodes';
 import { Menu as UikitMenu, Button } from '@pancakeswap-libs/uikit';
 import { useWalletContext } from '../../utils/walletContext';
 import { fetchBooPrice } from '../../utils/phantasmaApi';

@@ -2,9 +2,9 @@ import React from 'react'
 import BigNumber from 'bignumber.js'
 import styled from 'styled-components'
 import { Modal, Text, Flex } from '@pancakeswap-libs/uikit'
-import useI18n from 'hooks/useI18n'
-import { calculateBooEarnedPerThousandDollars, apyModalRoi } from 'utils/compoundApyHelpers'
-import { Address } from 'config/constants/types'
+import useI18n from '../../../../hooks/useI18n'
+import { calculateBooEarnedPerThousandDollars, apyModalRoi } from '../../../../utils/compoundApyHelpers'
+import { Address } from '../../../../config/constants/types'
 import getLiquidityUrlPathParts from '../../../../utils/getLiquidityUrlPathParts'
 
 interface ApyCalculatorModalProps {

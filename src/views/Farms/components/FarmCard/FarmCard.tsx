@@ -9,8 +9,8 @@ import {
   Heading,
   
 } from '@pancakeswap-libs/uikit';
-import ExpandableSectionButton from 'components/ExpandableSectionButton';
-import { calculateApyFromBooPerSecond } from 'utils/compoundApyHelpers'
+import ExpandableSectionButton from '../../../../components/ExpandableSectionButton';
+import { calculateApyFromBooPerSecond } from '../../../../utils/compoundApyHelpers'
 import DetailsSection from './DetailsSection';
 import CardHeading from './CardHeading';
 import ApyButton from './ApyButton';

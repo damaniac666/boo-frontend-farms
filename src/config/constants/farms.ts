@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { fetchBooPrice } from 'utils/phantasmaApi'
-import { calculateApyFromBooPerSecond } from 'utils/compoundApyHelpers'
+import { fetchBooPrice } from '../../utils/phantasmaApi'
+import { calculateApyFromBooPerSecond } from '../../utils/compoundApyHelpers'
 
 import contracts from './contracts'
 import { FarmConfig, QuoteToken } from './types'

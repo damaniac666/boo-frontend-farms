@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import useRefresh from './useRefresh';
-import { farmsConfig } from 'config/constants';
+import { farmsConfig } from '../config/constants';
 
 const useAllEarnings = () => {
   const [balances, setBalance] = useState<BigNumber[]>([]);

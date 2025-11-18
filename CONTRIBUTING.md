@@ -37,7 +37,7 @@ Don't forget to setup your IDE with `eslint` and `prettier`.
 
 Run tests with `yarn test`.
 
-## Localisation
+## Localization
 
 _In order for the Crowdin API queries to work - you will need `REACT_APP_CROWDIN_APIKEY` & `REACT_APP_CROWDIN_PROJECTID` env variables set in your root `.env.development.local` file_
 

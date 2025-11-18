@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { BlockContext } from 'contexts/BlockContext';
+import { BlockContext } from '../contexts/BlockContext';
 
 const useBlock = () => {
   const block = useContext(BlockContext);

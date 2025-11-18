@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { TranslationsContext } from '../contexts/Localisation/translationsContext'
+import { TranslationsContext } from '../contexts/Localization/translationsContext'
 import { getTranslation } from '../utils/translateTextHelpers'
 
 const useI18n = () => {

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import useRefresh from './useRefresh';
-import { FarmConfig } from 'config/constants/types';
-import { farmsConfig } from 'config/constants';
+import { FarmConfig } from '../config/constants/types';
+import { farmsConfig } from '../config/constants';
 
 export interface FarmWithBalance extends FarmConfig {
   balance: BigNumber;

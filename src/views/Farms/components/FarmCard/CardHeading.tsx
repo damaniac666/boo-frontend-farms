@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Tag, Flex, Heading, Image } from '@pancakeswap-libs/uikit'
-import { NoFeeTag } from 'components/Tags'
+import { NoFeeTag } from '../../../../components/Tags'
 
 export interface CardHeadingProps {
   lpLabel?: string;

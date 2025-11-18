@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import { Button, Flex, Heading } from '@pancakeswap-libs/uikit'
 import useI18n from '../../../../hooks/useI18n'
 import { useHarvest } from '../../../../hooks/useHarvest'
-import { getBalanceNumber } from 'utils/formatBalance'
+import { getBalanceNumber } from '../../../../utils/formatBalance'
 import styled from 'styled-components'
 import useStake from '../../../../hooks/useStake'
 
