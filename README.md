@@ -1,7 +1,9 @@
 # 🥞 Pancake Frontend
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/7bebf1a3-be7b-4165-afd1-446256acd5e3/deploy-status)](https://app.netlify.com/sites/pancake-prod/deploys)
+This project is a fork of the 2021 BSC Pancakeswap v2 farms but converted for PhantasmaChain. All EVM connectivity has been removed and replaced with easyConnect for PhantasmaLink v4 Carbon connections using Ecto(web wallet) or Poltergeist (desktop wallet). 
 
-This project contains the main features of the pancake application.
+Once smart contracts are re-enabled on chain I will publish the Tomb converted contracts based on the EVM versions of Masterchef. This is based on the Goose Finance model which was popular for a time and had functionality like fees on deposit. 
 
-If you want to contribute, please refer to the [contributing guidelines](./CONTRIBUTING.md) of this project.
+The Pancake DEX swap section has not been migrated due to the way Phantasma handles tokens. All DEX LP "deposits" are replaced by "check-ins" for holders of SATRN NFT's for the relevant pools. This essentially opts the holder into receiving rewards by adding their address to a storage list without physically depositing their NFT's in the Masterchef contract. Single staking tokens (in this farm BOO and KCAL) still deposit as normal from the users wallet into the contract address.
+
+This is still a work in progress.
